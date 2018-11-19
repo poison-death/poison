@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Admin\Wzsz;
 
 class IndexController extends Controller
 {
@@ -16,7 +17,8 @@ class IndexController extends Controller
      */
     public function index()
     {
-        return view('admin.index.index');
+        $wzsz = Wzsz::where('status','=',1)->first();
+        return view('admin.index.index',['wzsz'=>$wzsz]);
     }
 
     /**

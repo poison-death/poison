@@ -46,8 +46,18 @@ class UsersController extends Controller
     public function store(UsersStoreRequest $request)
     {
         DB::beginTransaction();
+        if($request -> hasFile('photo')){
+            $photo = $request -> file('photo');
+            $ext = $photo ->getClientOriginalExtension();
+            $file_name = str_random(20).time().'.'.$ext;
+            $dir_name = './users/uploads/photo/'.date('Ymd',time());
+            $res = $photo -> move($dir_name,$file_name);
+            $slide_path = ltrim($dir_name.'/'.$file_name,'.');
+        }
         $users = new Users;
+        $users->photo = $slide_path;
         $users->uname = $request->input('uname');
+        $users->status = $request->input('status',1);
         $users->upwd = Hash::make($request->input('upwd'));
         $res1 = $users->save();
         $id = $users->id;
@@ -75,9 +85,9 @@ class UsersController extends Controller
      */
     public function show($id)
     {
-        //
+        $user = Users::find($id);
+        return view('admin.users.show',['title'=>'修改密码','user'=>$user,'id'=>$id]);
     }
-
     /**
      * Show the form for editing the specified resource.
      *
@@ -89,7 +99,6 @@ class UsersController extends Controller
         $user = Users::find($id);
         return view('admin.users.edit',['title'=>'用户修改','user'=>$user,'id'=>$id]);
     }
-
     /**
      * Update the specified resource in storage.
      *
@@ -100,7 +109,17 @@ class UsersController extends Controller
     public function update(EditStoreRequest $request, $id)
     {
         DB::beginTransaction();
+        if($request->hasFile('photo')){
+            $photo = $request -> file('photo');
+            $ext = $photo ->getClientOriginalExtension();
+            $file_name = str_random(20).time().'.'.$ext;
+            $dir_name = './users/uploads/photo/'.date('Ymd',time());
+            $res = $photo -> move($dir_name,$file_name);
+            $slide_path = ltrim($dir_name.'/'.$file_name,'.');
+        }
         $users = Users::find($id);
+        $users->photo = $slide_path;
+        $users->status = $request->input('status');
         $users->uname = $request->input('uname');
         $res1 = $users->save();
         $users->userinfo->phone = $request->input('phone');

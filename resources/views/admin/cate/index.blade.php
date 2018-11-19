@@ -28,7 +28,7 @@
                       		<a href="/admin/cate/{{ $v->id }}/edit" class="btn btn-light">修改</a>
                       		<form action="/admin/cate/{{ $v->id }}" method="post" style="display: inline-block;">
                       			{{ method_field('DELETE') }}
-                      			<input type="submit" value="删除" class="btn btn-light">
+                      			<input type="submit" value="删除" class="btn btn-light" onclick="return del()">
                       		</form>
                       	</th>
                       </tr>
@@ -41,5 +41,14 @@
                 </div>
               </div>
             </div>
-
+            <script type="text/javascript">
+              function del()
+              {
+                if(confirm("确定要删除吗？")){
+                    return true;
+                }else{
+                    return false;
+                }  
+              }
+            </script>
 @endsection

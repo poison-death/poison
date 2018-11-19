@@ -10,8 +10,7 @@
 	<title>登录</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="Free HTML5 Template by FreeHTML5.co" />
-	<meta name="keywords" content="free html5, free template, free bootstrap, html5, css3, mobile first, responsive" />
-	
+	<meta name="keywords" content="free html5, free template, free bootstrap, html5, css3, mobile first, responsive" />	
 
   
 
@@ -59,23 +58,30 @@
 			<div class="row">
 				<div class="col-md-4">
 					
+            @if (session('success'))     
+            <div class="alert alert-success">
+              {{ session('success') }}
+            </div>
+          @endif
 
+          @if (session('error'))
+            <div class="alert alert-danger">
+              {{ session('error') }}
+            </div>
+          @endif
 					<!-- Start Sign In Form -->
-					<form action="#" class="fh5co-form animate-box" data-animate-effect="fadeInLeft">
+					<form action="/admin/login/ratio" class="fh5co-form animate-box" data-animate-effect="fadeInLeft" method="post">
 						<h2>{{ $title }}</h2>
 						<div class="form-group">
 							<label for="username" class="sr-only">Username</label>
-							<input type="text" class="form-control" id="username" placeholder="用户名" autocomplete="off" name="uname">
+							<input type="text" class="form-control" id="username" placeholder="用户名" autocomplete="off" name="name">
 						</div>
 						<div class="form-group">
 							<label for="password" class="sr-only">Password</label>
-							<input type="password" class="form-control" id="password" placeholder="密码" autocomplete="off" name="upwd">
+							<input type="password" class="form-control" id="password" placeholder="密码" autocomplete="off" name="upass">
 						</div>
 						<div class="form-group">
-							<label for="remember"><input type="checkbox" id="remember"> 记住我</label>
-						</div>
-						<div class="form-group">
-							<p>没有注册? <a href="/admin/login/register">注册</a> | <a href="/admin/login/forget">忘记密码?</a></p>
+							<a href="/admin/login/forget">忘记密码?</a></p>
 						</div>
 						<div class="form-group">
 							<input type="submit" value="登录" class="btn btn-primary">

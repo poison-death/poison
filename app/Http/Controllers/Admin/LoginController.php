@@ -6,6 +6,12 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UsersStoreRequest;
+use App\Admin\Users;
+use App\Admin\Usersall;
+use Hash;
+use DB;
+use Auth;
 
 class LoginController extends Controller
 {
@@ -13,91 +19,37 @@ class LoginController extends Controller
     {
         return view('admin.login.login',['title'=>'登录']);
     }
-    public function register()
+
+    public function ratio(Request $request)
     {
-        return view('admin.login.register',['title'=>'注册']);
+        DB::beginTransaction();
+        $name = $request->input('name');
+        $upass = $request->input('upass');
+        
+        $users = Users::all();
+        foreach ($users as $k=>$v) {
+            if ($name === $v->uname) {
+                if(strpos($v->uname, $name)!==false && Hash::check($upass,$v->upwd) && $v->status == 1) {
+                    DB::commit();
+                    session(['admin'=>true]);
+                    session(['user' => $v->uname]);
+                    session(['pic' => $v->photo]);
+                    return redirect('/admin')->with('success','登录成功');
+                }else if(strpos($v->uname, $name)!==false && Hash::check($upass,$v->upwd) && $v->status == 2){
+                        DB::rollback();
+                        return back()->with('error','非管理员不能登录');
+                }else{
+                    DB::rollback();
+                    return back()->with('error','密码或账号错误');
+                }
+            }
+        } 
+        return back()->with('error','用户名错误');     
     }
+    
     public function forget()
     {
         return view('admin.login.forget',['title'=>'找回密码']);
     }
-    // public function register()
-    // {
-    //     return view('admin.login.register',['title'=>'注册']);
-    // }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
+    
 }

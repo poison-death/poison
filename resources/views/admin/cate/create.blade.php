@@ -32,7 +32,7 @@
 		  </label>
 		</div>
 		<button class="btn btn-success mr-2" type="submit">提交</button>
-		<button class="btn btn-light">取消</button>
+		<a class="btn btn-light" href="/admin/cate">取消</a>
 		</form>
 	</div>
 				

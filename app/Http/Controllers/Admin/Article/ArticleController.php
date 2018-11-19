@@ -7,10 +7,21 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Admin\Article;
+use App\Admin\Cate;
+use App\Admin\Users;
 use DB;
 
 class ArticleController extends Controller
 {
+    // public static function getCates()
+    // {
+    //     $cate = Cate::select('*',DB::raw("concat(path,',',id) as paths"))->orderBy('paths','asc')->paginate(20);
+    //     foreach ($cate as $k => $v) {
+    //         $n = substr_count($v->path,',');
+    //         $cate[$k]->cname = str_repeat('|----', $n).$v->cname; 
+    //     }
+    //     return $cate;
+    // }
     /**
      * Display a listing of the resource.
      *
@@ -18,12 +29,13 @@ class ArticleController extends Controller
      */
     public function index(Request $request)
     {
+        $cate = Cate::all();
+        $users = Cate::all();
         $search = $request->input('search','');
         $article = Article::where('title','like','%'.$search.'%')->paginate(5);
         // $article = Article::all();
-        return view('admin.article.index',['article'=>$article,'title'=>'文章列表','request'=>$request->all()]);
+        return view('admin.article.index',['users'=>$users,'cate'=>$cate,'article'=>$article,'title'=>'文章列表','request'=>$request->all()]);
     }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -31,7 +43,16 @@ class ArticleController extends Controller
      */
     public function create()
     {
-        return view('admin.article.create',['title'=>'文章添加']);
+        $article = new Article;
+                //获取类别
+        $cates = Cate::select('*',DB::raw("concat(path,',',id) as paths"))->orderBy('paths','asc')->get();
+        $users = Users::where('status','=',1)->get();
+        // 统计逗号出现的次数
+        foreach ($cates as $k => $v) {
+            $n = substr_count($v->path,',');
+            $cates[$k]->cname = str_repeat('|----',$n).$v->cname;
+        }
+        return view('admin.article.create',['title'=>'文章添加','cate'=>$cates,'article'=>$article,'users'=>$users]);
     }
 
     /**
@@ -46,6 +67,11 @@ class ArticleController extends Controller
         $article = new Article;
         $article->title = $request->input('title','');
         $article->content = $request->input('content','');
+        $article->author = $request->input('author','');
+        $article->uid = $request->input('uid');
+        $article->cid = $request->input('cid');
+
+
         $res1 = $article->save();
         if ($res1) {
             DB::commit();

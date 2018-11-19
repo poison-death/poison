@@ -1,6 +1,6 @@
-@extends('admin.layout.index');
+@extends('admin.layout.index')
 
-@section('content')
+@section('text')
 
 <div class="g_12 separator"><span></span></div>
 <div class="g_3 quick_stats">
